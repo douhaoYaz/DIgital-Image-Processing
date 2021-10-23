@@ -22,14 +22,32 @@ cv.circle(img, (460, 415), 55, (0, 0, 0), cv.FILLED)
 
 # 添加OpenCV文本
 cv.putText(img, "OpenCV", (75, 675), cv.FONT_HERSHEY_SIMPLEX, 4, (255, 255, 255), 3)
-# 添加学号姓名
-cv.putText(img, "Created by 201841510108 Fuhaoyang", (300, 710), cv.FONT_HERSHEY_SIMPLEX, 0.45, (255, 0, 255), 1)
-# 加矩形框
-cv.rectangle(img, (298, 698), (585, 715), (0, 255, 0))
+# # 添加学号姓名
+# cv.putText(img, "Created by 201841510108 Fuhaoyang", (300, 710), cv.FONT_HERSHEY_SIMPLEX, 0.45, (255, 0, 255), 1)
+# # 加矩形框
+# cv.rectangle(img, (298, 698), (585, 715), (0, 255, 0))
 
-# 显示图像
-cv.imshow("OpenCV Logo", img)
-cv.waitKey(0)
+# 利用OpenCV的鼠标事件，实现鼠标在窗口的任意位置双击时，显示学号姓名和矩形框
+def drawInfo(event, x, y, flags, param):
+    if event == cv.EVENT_LBUTTONDBLCLK:
+        # 添加学号姓名
+        cv.putText(img, "Created by 201841510108 Fuhaoyang", (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.45, (255, 0, 255),1)
+        # 加矩形框
+        cv.rectangle(img, (x-2, y-12), (x+285, y+5), (0, 255, 0))
+
+cv.namedWindow("OpenCV")
+cv.setMouseCallback("OpenCV", drawInfo)
+
+while(1):
+    cv.imshow("OpenCV", img)
+    if cv.waitKey(20) & 0xFF == ord('q'):
+        break
+
+cv.destroyAllWindows()
+
+# # 显示图像
+# cv.imshow("OpenCV Logo", img)
+# cv.waitKey(0)
 
 # 缩放图片到1/2，保存为logo.png
 height, width = img.shape[:2]
