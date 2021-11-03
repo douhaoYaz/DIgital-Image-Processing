@@ -28,54 +28,61 @@ def transform(value, a, b):
     else:
         return res
 
-def showImages(name_img, img, img1, img2, img3, img4, img5):
+def showImages(nameWindow, img, title_img, img1, title_img1, img2, title_img2, img3, title_img3, img4, title_img4, img5, title_img5, savePath):
     """ 显示灰度线性变换后的图像
 
-    :param name_img: 窗口名称
+    :param nameWindow: 窗口名称
     :param img: 原始图像
-    :param img1: 变换后图像
-    :param img2: 变换后图像
-    :param img3: 变换后图像
-    :param img4: 变换后图像
-    :param img5: 变换后图像
+    :param title_img: 图像标题
+    :param img1: 修改后图像1
+    :param title_img1: 图像标题
+    :param img2: 修改后图像2
+    :param title_img2: 图像标题
+    :param img3: 修改后图像3
+    :param title_img3: 图像标题
+    :param img4: 修改后图像4
+    :param title_img4: 图像标题
+    :param img5: 修改后图像5
+    :param title_img5: 图像标题
+    :param savePath: 保存路径
     :return: None
     """
 
     # 创建画布figure
-    fig = plt.figure(name_img)
+    fig = plt.figure(nameWindow)
     # 创建子图1
     subplot1 = fig.add_subplot(2, 3, 1)
-    subplot1.set_title('original')
+    subplot1.set_title(title_img)
     subplot1.imshow(img, cmap='gray')
     plt.axis('off')
 
     # 创建子图2
     subplot1 = fig.add_subplot(2, 3, 2)
-    subplot1.set_title('a=1, b=30')
+    subplot1.set_title(title_img1)
     subplot1.imshow(img1, cmap='gray')
     plt.axis('off')
 
     # 创建子图3
     subplot1 = fig.add_subplot(2, 3, 3)
-    subplot1.set_title('a=1.5, b=0')
+    subplot1.set_title(title_img2)
     subplot1.imshow(img2, cmap='gray')
     plt.axis('off')
 
     # 创建子图4
     subplot1 = fig.add_subplot(2, 3, 4)
-    subplot1.set_title('a=0.2, b=0')
+    subplot1.set_title(title_img3)
     subplot1.imshow(img3, cmap='gray')
     plt.axis('off')
 
     # 创建子图5
     subplot1 = fig.add_subplot(2, 3, 5)
-    subplot1.set_title('a=-1, b=255')
+    subplot1.set_title(title_img4)
     subplot1.imshow(img4, cmap='gray')
     plt.axis('off')
 
     # 创建子图6
     subplot1 = fig.add_subplot(2, 3, 6)
-    subplot1.set_title('a=1.5, b=10')
+    subplot1.set_title(title_img5)
     subplot1.imshow(img5, cmap='gray')
     plt.axis('off')
 
@@ -83,7 +90,7 @@ def showImages(name_img, img, img1, img2, img3, img4, img5):
     fig.subplots_adjust(wspace=0.5, hspace=0.5)
 
     #保存
-    savefig(plt, "task2_1.png", 3.3 * img.shape[1], 1.1 * img.shape[0])
+    savefig(plt, savePath, 3.3 * img.shape[1], 1.1 * img.shape[0])
 
     # 显示图像
     plt.show()
@@ -118,7 +125,7 @@ for i in range(height):
         img4[i,j] = transform(img[i,j], -1, 255)
         img5[i,j] = transform(img[i,j], 1.5, 10)
 
-showImages(None, img, img1, img2, img3, img4, img5)
+showImages(nameWindow=None, img=img, title_img='original', img1=img1, title_img1='a=1, b=30', img2=img2, title_img2='a=1.5, b=0', img3=img3, title_img3='a=0.2, b=0', img4=img4, title_img4='a=-1, b=255', img5=img5, title_img5='a=1.5, b=10', savePath='task2_1.png')
 
 
 
