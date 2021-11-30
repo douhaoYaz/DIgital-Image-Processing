@@ -84,20 +84,66 @@ def showImages(nameWindow, img, title_img, img1, title_img1, img2, title_img2, i
     # 显示图像
     plt.show()
 
+def showImages_b(images, titles, savePath):
+    """ 任务b绘图函数
+
+    :param images: 要绘制的子图
+    :param titles: 子图标题
+    :param savePath 保存路径
+    :return: None
+    """
+
+    # 创建画布figure
+    fig = plt.figure("")
+
+    for i in range(4):
+        sub = fig.add_subplot(2, 2, i + 1)
+        sub.imshow(images[i], 'gray')
+        sub.set_title(titles[i], fontsize=8)
+        sub.xaxis.set_ticks([]), sub.yaxis.set_ticks([])
+
+    # 调整子图间距
+    fig.subplots_adjust(wspace=0.2, hspace=0.2)
+    # 保存
+    savefig(plt, savePath, 2.1 * images[0].shape[1], 1.0 * images[0].shape[0])
+
+    plt.show()
+
+
 if __name__ == '__main__':
+    # # 任务1 a
+    # # imread()不能读取路径包含中文的图片，此处先用numpy的fromfile()函数读取，再用OpenCV的imdecode()从内存的buffer中读取图片
+    # gradient = cv.imdecode(np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\gradient.jpg', dtype=np.uint8), -1)
+    # # 转成灰度图
+    # gradient = cv.cvtColor(gradient, cv.COLOR_BGR2GRAY)
+    #
+    # # 进行5个不同类型的阈值化
+    # ret1, gradient_bin = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY)
+    # ret2, gradient_bin_inv = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY_INV)
+    # ret3, gradient_trunc = cv.threshold(gradient, 127, 255, cv.THRESH_TRUNC)
+    # ret4, gradient_toz =  cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO)
+    # ret5, gradient_toz_inv = cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO_INV)
+    #
+    # showImages("", gradient, "Original", gradient_bin, "BINARY", gradient_bin_inv, "BINARY_INV", gradient_trunc, "TRUNC", gradient_toz, "TOZERO", gradient_toz_inv, "TOZERO_INV", "gradient.png")
+
+
+    # 任务1 b
     # imread()不能读取路径包含中文的图片，此处先用numpy的fromfile()函数读取，再用OpenCV的imdecode()从内存的buffer中读取图片
-    gradient = cv.imdecode(np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\gradient.jpg', dtype=np.uint8), -1)
+    sudoku = cv.imdecode(
+        np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\sudoku.jpg', dtype=np.uint8), -1)
     # 转成灰度图
-    gradient = cv.cvtColor(gradient, cv.COLOR_BGR2GRAY)
+    sudoku = cv.cvtColor(sudoku, cv.COLOR_BGR2GRAY)
 
-    # 进行5个不同类型的阈值化
-    ret1, gradient_bin = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY)
-    ret2, gradient_bin_inv = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY_INV)
-    ret3, gradient_trunc = cv.threshold(gradient, 127, 255, cv.THRESH_TRUNC)
-    ret4, gradient_toz =  cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO)
-    ret5, gradient_toz_inv = cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO_INV)
+    # 全局阈值化，阈值为100
+    ret_sudoku, sudoku_global = cv.threshold(sudoku, 100, 255, cv.THRESH_BINARY)
+    # 均值自适应阈值化，邻域大小为11
+    sudoku_mean = cv.adaptiveThreshold(sudoku, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 11, 4)
+    # 高斯自适应阈值化，邻域大小为17
+    sudoku_gauss = cv.adaptiveThreshold(sudoku, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 17, 6)
 
-    showImages("", gradient, "Original", gradient_bin, "BINARY", gradient_bin_inv, "BINARY_INV", gradient_trunc, "TRUNC", gradient_toz, "TOZERO", gradient_toz_inv, "TOZERO_INV", "gradient.png")
+    images = [sudoku, sudoku_global, sudoku_mean, sudoku_gauss]
+    titles = ["Original", "Global", "Adaptive Mean", "Adaptive Gaussian"]
+    showImages_b(images, titles, "adaptiveThreshold.png")
 
-    # cv.imshow("gradient", gradient_toz_inv)
+    # cv.imshow("sudoku", sudoku_mean)
     # cv.waitKey(0)
