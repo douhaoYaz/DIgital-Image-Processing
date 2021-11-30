@@ -17,8 +17,8 @@ def savefig(plt, filename, width=1024, height=768, dpi=300):
     fig.text(0.5, 0.5, '201841510108 符浩扬', fontsize=10, rotation=0, color='red', ha='right', va='bottom', alpha=0.7)
     fig.savefig(filename, format='png', transparent=True, dpi=300, pad_inches=0)
 
-def showImages(nameWindow, img, title_img, img1, title_img1, img2, title_img2, img3, title_img3, img4, title_img4, img5, title_img5, savePath):
-    """ 显示处理后的图像
+def showImages_a(nameWindow, img, title_img, img1, title_img1, img2, title_img2, img3, title_img3, img4, title_img4, img5, title_img5, savePath):
+    """ 任务a绘图函数
 
     :param nameWindow: 窗口名称
     :param img: 原始图像
@@ -109,22 +109,52 @@ def showImages_b(images, titles, savePath):
 
     plt.show()
 
+def showImages_c(images, titles, savePath):
+    """ 任务c的绘图函数
+
+    :param images: 要绘制的子图
+    :param titles: 子图标题
+    :param savePath: 保存路径
+    :return: None
+    """
+
+    for i in range(4):
+        # 绘制原图
+        plt.subplot(4, 3, i * 3 + 1)
+        plt.imshow(images[i * 3], 'gray')
+        plt.title(titles[i * 3], fontsize=8)
+        plt.xticks([]), plt.yticks([])
+
+        # 绘制直方图plt.hist, ravel函数将数组降成一维
+        plt.subplot(4, 3, i * 3 + 2)
+        plt.hist(images[i * 3].ravel(), 256)
+        plt.title(titles[i * 3 + 1], fontsize=8)
+        plt.xticks([]), plt.yticks([])
+
+        # 绘制阈值图
+        plt.subplot(4, 3, i * 3 + 3)
+        plt.imshow(images[i * 3 + 2], 'gray')
+        plt.title(titles[i * 3 + 2], fontsize=8)
+        plt.xticks([]), plt.yticks([])
+    savefig(plt, savePath, 3.3 * images[0].shape[1], 4.2 * images[0].shape[0])
+    plt.show()
+
 
 if __name__ == '__main__':
-    # # 任务1 a
-    # # imread()不能读取路径包含中文的图片，此处先用numpy的fromfile()函数读取，再用OpenCV的imdecode()从内存的buffer中读取图片
-    # gradient = cv.imdecode(np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\gradient.jpg', dtype=np.uint8), -1)
-    # # 转成灰度图
-    # gradient = cv.cvtColor(gradient, cv.COLOR_BGR2GRAY)
-    #
-    # # 进行5个不同类型的阈值化
-    # ret1, gradient_bin = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY)
-    # ret2, gradient_bin_inv = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY_INV)
-    # ret3, gradient_trunc = cv.threshold(gradient, 127, 255, cv.THRESH_TRUNC)
-    # ret4, gradient_toz =  cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO)
-    # ret5, gradient_toz_inv = cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO_INV)
-    #
-    # showImages("", gradient, "Original", gradient_bin, "BINARY", gradient_bin_inv, "BINARY_INV", gradient_trunc, "TRUNC", gradient_toz, "TOZERO", gradient_toz_inv, "TOZERO_INV", "gradient.png")
+    # 任务1 a
+    # imread()不能读取路径包含中文的图片，此处先用numpy的fromfile()函数读取，再用OpenCV的imdecode()从内存的buffer中读取图片
+    gradient = cv.imdecode(np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\gradient.jpg', dtype=np.uint8), -1)
+    # 转成灰度图
+    gradient = cv.cvtColor(gradient, cv.COLOR_BGR2GRAY)
+
+    # 进行5个不同类型的阈值化
+    ret1, gradient_bin = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY)
+    ret2, gradient_bin_inv = cv.threshold(gradient, 127, 255, cv.THRESH_BINARY_INV)
+    ret3, gradient_trunc = cv.threshold(gradient, 127, 255, cv.THRESH_TRUNC)
+    ret4, gradient_toz =  cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO)
+    ret5, gradient_toz_inv = cv.threshold(gradient, 127, 255, cv.THRESH_TOZERO_INV)
+
+    showImages_a("", gradient, "Original", gradient_bin, "BINARY", gradient_bin_inv, "BINARY_INV", gradient_trunc, "TRUNC", gradient_toz, "TOZERO", gradient_toz_inv, "TOZERO_INV", "gradient.png")
 
 
     # 任务1 b
@@ -145,5 +175,30 @@ if __name__ == '__main__':
     titles = ["Original", "Global", "Adaptive Mean", "Adaptive Gaussian"]
     showImages_b(images, titles, "adaptiveThreshold.png")
 
-    # cv.imshow("sudoku", sudoku_mean)
-    # cv.waitKey(0)
+    # 任务1 c
+    # imread()不能读取路径包含中文的图片，此处先用numpy的fromfile()函数读取，再用OpenCV的imdecode()从内存的buffer中读取图片
+    noisy = cv.imdecode(
+        np.fromfile(r'F:\Work and Learn\FIGHT\大三\数字图像处理\Lab\Lab3\Lab3_Image\noisy.jpg', dtype=np.uint8), -1)
+    # 转成灰度图
+    noisy = cv.cvtColor(noisy, cv.COLOR_BGR2GRAY)
+
+    # 固定阈值法
+    ret1, th1 = cv.threshold(noisy, 105, 255, cv.THRESH_BINARY)
+
+    # Otsu阈值法
+    ret2, th2 = cv.threshold(noisy, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+    # 先进行高斯滤波，再使用Otsu阈值法
+    blur = cv.GaussianBlur(noisy, (5, 5), 0)
+    ret3, th3 = cv.threshold(blur, 105, 255, cv.THRESH_BINARY)
+    ret4, th4 = cv.threshold(blur, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+    # 分别创建图像和标题的list
+    images_c = [noisy, 0, th1, noisy, 0, th2, blur, 0, th3, blur, 0, th4]
+    titles_c = ['Original', 'Histogram', 'Global(v=105)',
+              'Original', 'Histogram', "Otsu's",
+              'Gaussian filtered Image', 'Histogram', "Global(v=105)",
+              'Gaussian filtered Image', 'Histogram', "Otsu's"]
+
+    showImages_c(images_c, titles_c, "noisy_Otsu.png")
+
